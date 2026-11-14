@@ -74,15 +74,113 @@
   .letter{font-size:clamp(1.2rem,2.4vw,1.6rem);line-height:1.5;max-width:34ch;font-style:italic}
   .sign{margin-top:2vh;font-size:clamp(1.3rem,2.6vw,1.8rem);color:var(--gold2)}
   #burst{position:fixed;inset:0;z-index:5;pointer-events:none}
+
+  /* ---------- mot de passe ---------- */
+  #danger{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(circle at 50% 50%,rgba(180,0,20,.15),rgba(120,0,10,.75));opacity:0;transition:opacity 1s}
+  #flash{position:fixed;inset:0;z-index:6;pointer-events:none;background:#d0021b;opacity:0}
+  #flash.on{animation:flash .6s ease-out}
+  @keyframes flash{0%{opacity:.75}100%{opacity:0}}
+  .q{font-size:clamp(1.6rem,4vw,2.6rem);color:var(--ivory);margin:3vh 0 4vh;font-style:italic}
+  .pw{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4.5vw,2.8rem);color:var(--gold2);text-align:center;letter-spacing:.08em;
+    width:min(80vw,460px);background:rgba(255,255,255,.04);border:none;border-bottom:2px solid var(--gold);border-radius:14px 14px 0 0;padding:.4em .6em;outline:none;-webkit-user-select:text;user-select:text}
+  .pw::placeholder{color:rgba(217,180,106,.35);font-style:italic}
+  .shake{animation:shake .55s}
+  @keyframes shake{10%,90%{transform:translateX(-3px)}20%,80%{transform:translateX(6px)}30%,50%,70%{transform:translateX(-12px)}40%,60%{transform:translateX(12px)}}
+  .tries{display:flex;gap:14px;margin-top:3.5vh}
+  .tries i{width:16px;height:16px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px rgba(217,180,106,.7);transition:all .5s}
+  .tries i.lost{background:#d0021b;box-shadow:0 0 16px #ff1a3a;transform:scale(.8)}
+  .err{min-height:1.6em;margin-top:2.5vh;font-family:'Jost',sans-serif;font-size:clamp(1rem,2vw,1.25rem);color:#ff5a6e;letter-spacing:.04em}
+  .lock{transition:transform .8s}
+
+  /* ---------- boîte 3D ---------- */
+  .scene{perspective:1100px;width:220px;height:220px;position:relative;margin-bottom:12vh}
+  .box{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(-22deg) rotateY(-35deg)}
+  .box.spin{animation:spin3d 3.2s cubic-bezier(.3,.1,.2,1) forwards}
+  @keyframes spin3d{0%{transform:translateY(-120vh) rotateX(-22deg) rotateY(-35deg) scale(.4)}35%{transform:translateY(0) rotateX(-22deg) rotateY(250deg) scale(1)}
+    100%{transform:translateY(0) rotateX(-22deg) rotateY(685deg) scale(1)}}
+  .face,.lidtop{position:absolute;width:220px;height:220px;border:2px solid var(--gold);
+    background:linear-gradient(90deg,transparent 43%,#d9b46a 43%,#f3dfa8 50%,#d9b46a 57%,transparent 57%),linear-gradient(135deg,#25306a,#0e1430);
+    box-shadow:inset 0 0 40px rgba(0,0,0,.5)}
+  .f1{transform:translateZ(110px)} .f2{transform:rotateY(180deg) translateZ(110px)}
+  .f3{transform:rotateY(90deg) translateZ(110px)} .f4{transform:rotateY(-90deg) translateZ(110px)}
+  .f5{transform:rotateX(-90deg) translateZ(110px)}
+  .lid{position:absolute;inset:0;transform-style:preserve-3d;transition:transform 1.4s cubic-bezier(.2,.8,.2,1),opacity 1.4s}
+  .lidtop{transform:rotateX(90deg) translateZ(110px);
+    background:linear-gradient(90deg,transparent 43%,#d9b46a 43%,#f3dfa8 50%,#d9b46a 57%,transparent 57%),linear-gradient(0deg,transparent 43%,#d9b46a 43%,#f3dfa8 50%,#d9b46a 57%,transparent 57%),linear-gradient(135deg,#2c3878,#141b45)}
+  .box.open .lid{transform:translateY(-320px) rotateZ(35deg) rotateX(40deg);opacity:0}
+  .beam{position:absolute;left:50%;top:50%;width:260px;height:260px;margin:-130px 0 0 -130px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,240,200,1),rgba(243,223,168,.6) 35%,rgba(217,180,106,0) 70%);transform:scale(0);opacity:0;transition:transform 1.8s ease-out,opacity 1.8s}
+  .beam.on{transform:scale(5);opacity:1}
+  .welcome{text-shadow:0 2px 18px rgba(11,16,38,.9),0 0 4px rgba(11,16,38,.8);opacity:0;transform:translateY(16px);transition:all 1.4s ease .6s}
+  .welcome.show{opacity:1;transform:none}
+  @media (max-width:600px){.scene{transform:scale(.75)}}
+
+  /* ---------- virus ---------- */
+  #sv{background:#7a0010;z-index:20;overflow:hidden;font-family:'Courier New',monospace;color:#ffd6db}
+  #sv.active{animation:redpulse 1.2s infinite}
+  @keyframes redpulse{0%,100%{background:#6a000d}50%{background:#b0001a}}
+  #sv pre{position:absolute;inset:0;font-size:12px;line-height:1.35;color:rgba(255,120,130,.35);white-space:pre-wrap;word-break:break-all;overflow:hidden;padding:10px;text-align:left}
+  #sv .vbox{position:relative;z-index:2;background:rgba(0,0,0,.55);border:2px solid #ff2a40;padding:5vh 6vw;max-width:90vw;box-shadow:0 0 60px rgba(255,0,30,.6)}
+  #sv h1{font-family:'Courier New',monospace;color:#fff;font-size:clamp(2rem,6vw,4rem);text-shadow:3px 0 #ff0033,-3px 0 #00e5ff;animation:glitch 1.6s infinite steps(1)}
+  @keyframes glitch{0%{transform:none}10%{transform:translate(-4px,2px) skewX(8deg)}12%{transform:none}50%{transform:translate(5px,-2px)}52%{transform:none}80%{clip-path:inset(30% 0 40% 0);transform:translateX(-8px)}82%{clip-path:none;transform:none}}
+  #sv .skull{font-size:clamp(3rem,9vw,6rem);animation:float 1.2s ease-in-out infinite}
+  #sv p{font-size:clamp(1rem,2.2vw,1.4rem);margin-top:2vh;line-height:1.5}
+  #sv .bar{height:14px;border:1px solid #ff6b7a;margin-top:3vh;position:relative;overflow:hidden}
+  #sv .bar b{position:absolute;inset:0;width:0;background:#ff2a40;animation:fill 6s linear infinite}
+  @keyframes fill{to{width:100%}}
 </style>
 </head>
 <body>
 <canvas id="sky"></canvas>
 <div class="pattern"></div>
 <canvas id="burst"></canvas>
+<div id="danger"></div>
+<div id="flash"></div>
+
+<!-- mot de passe -->
+<section class="screen active" id="sp">
+  <svg class="lock float" id="lockicon" width="90" height="110" viewBox="0 0 90 110" aria-hidden="true">
+    <path id="shackle" d="M22 48 V32 a23 23 0 0 1 46 0 V48" fill="none" stroke="#d9b46a" stroke-width="7" stroke-linecap="round"/>
+    <rect x="10" y="46" width="70" height="56" rx="10" fill="#d9b46a"/>
+    <circle cx="45" cy="70" r="7" fill="#0b1026"/><rect x="42" y="72" width="6" height="16" rx="3" fill="#0b1026"/>
+  </svg>
+  <p class="small" style="margin-top:3vh">Accès réservé</p>
+  <p class="q">Quel est le prénom de ton mari&nbsp;?</p>
+  <form id="pwform" autocomplete="off">
+    <input class="pw" id="pw" type="text" placeholder="Ta réponse…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="go">
+  </form>
+  <div class="tries"><i></i><i></i><i></i></div>
+  <p class="err" id="err"></p>
+  <button class="btn" id="bpw" style="margin-top:3vh">Valider</button>
+</section>
+
+<!-- boîte 3D -->
+<section class="screen" id="s3d">
+  <div class="scene">
+    <div class="beam" id="beam"></div>
+    <div class="box" id="box">
+      <div class="face f1"></div><div class="face f2"></div><div class="face f3"></div><div class="face f4"></div><div class="face f5"></div>
+      <div class="lid"><div class="lidtop"></div></div>
+    </div>
+  </div>
+  <h1 class="welcome" id="welcome">Bienvenue,<br>mon amour ❤️</h1>
+</section>
+
+<!-- virus -->
+<section class="screen" id="sv">
+  <pre id="code"></pre>
+  <div class="vbox">
+    <div class="skull">☠️</div>
+    <h1 id="vtitle">ACCÈS REFUSÉ</h1>
+    <p>⚠ Intrus détecté. 3 tentatives échouées.<br>Cette tablette est maintenant <b>verrouillée</b>.</p>
+    <p>Infection en cours…</p>
+    <div class="bar"><b></b></div>
+    <p style="margin-top:3vh">Seul ton mari peut te débloquer 😈</p>
+  </div>
+</section>
 
 <!-- 0 : accueil -->
-<section class="screen active" id="s0">
+<section class="screen" id="s0">
   <svg class="float" width="110" height="150" viewBox="0 0 110 150" aria-hidden="true">
     <defs><radialGradient id="glow" cx="50%" cy="60%" r="50%"><stop offset="0" stop-color="#ffe9b0"/><stop offset="1" stop-color="#d9b46a" stop-opacity="0"/></radialGradient></defs>
     <line x1="55" y1="0" x2="55" y2="22" stroke="#d9b46a" stroke-width="2"/>
@@ -198,6 +296,47 @@ let ac;function chime(notes=[659,880,1319]){try{ac=ac||new (window.AudioContext|
 const $=id=>document.getElementById(id);
 function go(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('s'+n).classList.add('active');}
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* ---------- mot de passe ---------- */
+const SECRET='djelloul', MAX=3;
+const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z]/g,'');
+const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+let fails=+(store.get('fails')||0);
+function paintTries(){document.querySelectorAll('.tries i').forEach((d,i)=>d.classList.toggle('lost',i<fails));
+  $('danger').style.opacity=fails===0?0:fails===1?.45:.85;}
+paintTries();
+
+function buzz(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.type='sawtooth';
+  o.frequency.setValueAtTime(180,ac.currentTime);o.frequency.linearRampToValueAtTime(90,ac.currentTime+.4);g.gain.setValueAtTime(.15,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.5);
+  o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+.5);}catch(e){} try{navigator.vibrate&&navigator.vibrate([120,60,120])}catch(e){}}
+let siren;function alarm(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.type='square';g.gain.value=.06;
+  o.connect(g).connect(ac.destination);o.start();let up=true;siren=setInterval(()=>{o.frequency.setTargetAtTime(up?880:440,ac.currentTime,.15);up=!up},450);
+  setTimeout(()=>{clearInterval(siren);g.gain.setTargetAtTime(0,ac.currentTime,.2);setTimeout(()=>o.stop(),800)},6000);}catch(e){} try{navigator.vibrate&&navigator.vibrate([400,150,400,150,800])}catch(e){}}
+
+function check(){const v=norm($('pw').value);if(!v)return;$('pw').blur();
+  if(v===SECRET){fails=0;store.del('fails');paintTries();unlock();return;}
+  fails++;store.set('fails',fails);paintTries();buzz();
+  $('flash').classList.remove('on');void $('flash').offsetWidth;$('flash').classList.add('on');
+  const f=$('pwform');f.classList.remove('shake');void f.offsetWidth;f.classList.add('shake');$('pw').value='';
+  if(fails>=MAX){store.set('locked','1');setTimeout(virus,700);}
+  else $('err').textContent=fails===1?'❌ Mauvaise réponse… plus que 2 essais':'⚠️ Attention… DERNIER essai !';}
+$('pwform').onsubmit=e=>{e.preventDefault();check();};
+$('bpw').onclick=check;
+
+async function unlock(){$('err').textContent='';$('shackle').style.transition='transform .6s';$('shackle').style.transform='translateY(-14px)';
+  chime([523,659,784]);await wait(900);go('3d');await wait(300);$('box').classList.add('spin');
+  await wait(3300);$('box').classList.add('open');$('beam').classList.add('on');burst(260);chime([523,659,784,1047,1319]);
+  $('welcome').classList.add('show');await wait(3800);go(0);}
+
+/* ---------- virus ---------- */
+function virus(){go('v');$('danger').style.opacity=0;alarm();
+  const hex='0123456789ABCDEF',words=['ERROR','ACCESS_DENIED','INTRUDER','LOCK','0xDEAD','SYS32','CORRUPT','ROOT','!!!'];let txt='';
+  const pre=$('code');const t=setInterval(()=>{let line='';for(let i=0;i<10;i++)line+=Math.random()<.15?words[Math.random()*words.length|0]+' ':hex[Math.random()*16|0]+hex[Math.random()*16|0]+' ';
+    txt=(txt+line+'\n').slice(-6000);pre.textContent=txt;},70);}
+// déblocage secret : toucher 7 fois le titre « ACCÈS REFUSÉ »
+let taps=0,tapT;$('vtitle').onclick=()=>{taps++;clearTimeout(tapT);tapT=setTimeout(()=>taps=0,2500);
+  if(taps>=7){store.del('locked');store.del('fails');location.reload();}};
+if(store.get('locked')==='1')virus();
 
 $('b0').onclick=async()=>{chime([523,659]);try{document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen().catch(()=>{});}catch(e){}
   go(1);const msgs=[...document.querySelectorAll('#s1 .msg')];await wait(1300);

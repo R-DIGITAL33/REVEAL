@@ -17,14 +17,15 @@
 <style>
 :root{--pink:#ff5fa2;--fuchsia:#e0218a;--lilac:#b36bff;--peach:#ffb199;--gold:#ffe29a;--white:#fff;--ink:#5a1846}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden}
+html{background:#ff7ccf}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
 body{font-family:'Poppins',sans-serif;color:#fff;-webkit-user-select:none;user-select:none;
   background:linear-gradient(-45deg,#ff5fa2,#b36bff,#ff9e7a,#ff7ccf,#8f6bff);background-size:400% 400%;animation:grad 18s ease infinite}
 @keyframes grad{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 canvas.layer{position:fixed;inset:0;pointer-events:none}
 #bg{z-index:0}#fx{z-index:8}
 .screen{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-  padding:calc(7vh + env(safe-area-inset-top)) calc(6vw + env(safe-area-inset-right)) calc(6vh + env(safe-area-inset-bottom)) calc(6vw + env(safe-area-inset-left));
+  padding:calc(6vh + env(safe-area-inset-top)) calc(6vw + env(safe-area-inset-right)) calc(11vh + env(safe-area-inset-bottom)) calc(6vw + env(safe-area-inset-left));
   opacity:0;pointer-events:none;transform:scale(1.04);transition:opacity .9s ease,transform .9s ease}
 .screen.active{opacity:1;pointer-events:auto;transform:none}
 .script{font-family:'Great Vibes',cursive;font-weight:400;font-size:clamp(3rem,9vw,6.5rem);line-height:1.05;text-shadow:0 4px 30px rgba(120,0,90,.35)}
@@ -49,7 +50,7 @@ h2{font-family:'Playfair Display',serif;font-weight:500;font-size:clamp(1.7rem,4
 .msg{min-height:1.6em;margin-top:2vh;font-size:clamp(1rem,2vw,1.25rem);font-weight:600}
 
 /* progression */
-#prog{position:fixed;z-index:4;bottom:calc(2vh + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);display:flex;gap:10px;padding:.5em 1em;opacity:0;transition:opacity .8s}
+#prog{position:fixed;z-index:4;bottom:calc(2.5vh + env(safe-area-inset-bottom));pointer-events:none;left:50%;transform:translateX(-50%);display:flex;gap:10px;padding:.5em 1em;opacity:0;transition:opacity .8s}
 #prog.on{opacity:1}
 #prog span{font-size:clamp(1.1rem,2.2vw,1.5rem);transition:transform .5s;filter:grayscale(1) opacity(.55)}
 #prog span.done{filter:none;transform:scale(1.15)}
@@ -79,12 +80,12 @@ h2{font-family:'Playfair Display',serif;font-weight:500;font-size:clamp(1.7rem,4
 
 /* mot mystère */
 .slots,.letters{display:flex;gap:clamp(8px,1.5vw,16px);justify-content:center;flex-wrap:wrap}
-.slots{margin-top:4vh}
+.slots{margin-top:3vh}
 .slot{width:clamp(48px,9vw,78px);height:clamp(58px,10.5vw,92px);border-radius:16px;border:2px dashed rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;
   font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4.5vw,3rem);background:rgba(255,255,255,.12);cursor:pointer}
 .slot.full{border-style:solid;background:#fff;color:var(--fuchsia)}
 .slots.win .slot{background:linear-gradient(135deg,#fff,#ffe29a);animation:pop .6s both}
-.letters{margin-top:4vh}
+.letters{margin-top:3vh}
 .letter{width:clamp(52px,9.5vw,82px);height:clamp(52px,9.5vw,82px);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;
   font-family:'Playfair Display',serif;font-size:clamp(1.7rem,4vw,2.6rem);color:var(--fuchsia);background:radial-gradient(circle at 30% 30%,#fff,#ffd6ec);box-shadow:0 8px 20px rgba(120,0,90,.3);transition:transform .25s,opacity .25s}
 .letter:nth-child(odd){animation:float 3.2s ease-in-out infinite}.letter:nth-child(even){animation:float 3.8s ease-in-out infinite .5s}
@@ -132,6 +133,8 @@ h2{font-family:'Playfair Display',serif;font-weight:500;font-size:clamp(1.7rem,4
 .route .ln{flex:1;height:2px;background:repeating-linear-gradient(90deg,var(--pink) 0 8px,transparent 8px 14px);position:relative}
 .route .ln::after{content:'✈️';position:absolute;left:50%;top:50%;transform:translate(-50%,-55%);font-size:clamp(1.2rem,2.6vw,1.8rem)}
 .dest{position:relative;border-radius:14px;overflow:hidden;min-width:clamp(130px,24vw,220px);padding:.2em .5em}
+.dest.cover b,.dest.cover span{visibility:hidden}
+.dest.cover{background:linear-gradient(135deg,#ff5fa2,#ffc2e2,#b36bff)}
 .dest canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;transition:opacity 1s}
 .kvs{display:flex;gap:clamp(14px,3vw,34px);flex-wrap:wrap}
 .kv b{font-size:clamp(.9rem,1.9vw,1.15rem)}
@@ -164,7 +167,8 @@ h2{font-family:'Playfair Display',serif;font-weight:500;font-size:clamp(1.7rem,4
 
 /* ---- améliorations des jeux ---- */
 .row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-.row .btn{margin-top:2.5vh;padding:.8em 1.6em}
+.row .btn{margin-top:2vh;padding:.8em 1.6em}
+.row .btn.hidden{display:none}
 .letters{max-width:min(92vw,720px)}
 .letter.gone{opacity:0;transform:scale(0) rotate(180deg);pointer-events:none;transition:all .6s}
 .slots.win .slot:nth-child(2){animation-delay:.08s}.slots.win .slot:nth-child(3){animation-delay:.16s}.slots.win .slot:nth-child(4){animation-delay:.24s}.slots.win .slot:nth-child(5){animation-delay:.32s}.slots.win .slot:nth-child(6){animation-delay:.4s}
@@ -332,7 +336,7 @@ h2{font-family:'Playfair Display',serif;font-weight:500;font-size:clamp(1.7rem,4
       <div class="route">
         <div class="city"><small>DÉPART</small><b>LYS</b><span>Lyon</span></div>
         <div class="ln"></div>
-        <div class="city dest" id="dest"><small>ARRIVÉE</small><b>MED</b><span>Médine</span><canvas id="scratch"></canvas></div>
+        <div class="city dest cover" id="dest"><small>ARRIVÉE</small><b>MED</b><span>Médine</span><canvas id="scratch"></canvas></div>
       </div>
       <div class="kvs">
         <div class="kv"><small>PASSAGERS</small><b>Toi &amp; moi</b></div>
@@ -543,13 +547,14 @@ $('br2').onclick=()=>{chime([659,880]);enter('g3');};
   const OUT=[[2.5,51.1],[4.2,49.95],[5.9,49.5],[8.2,49.0],[7.6,47.6],[6.9,47.4],[6.0,46.4],[7.0,45.9],[6.6,45.1],[7.0,44.2],[7.5,43.8],[6.2,43.1],[5.0,43.35],[4.2,43.5],[3.1,43.1],[3.2,42.45],[1.7,42.5],[-0.5,42.8],[-1.8,43.4],[-1.25,44.6],[-1.2,46.2],[-2.2,47.1],[-4.5,47.9],[-4.75,48.4],[-3.0,48.85],[-1.6,48.65],[-1.9,49.7],[-1.25,49.35],[0.2,49.5],[1.4,50.1],[1.6,50.9]];
   const CORSE=[[9.4,43.0],[9.55,42.3],[9.2,41.4],[8.6,41.9],[8.7,42.6]];
   const CITIES=[['Paris',2.35,48.86],['Lille',3.06,50.63],['Strasbourg',7.75,48.57],['Nantes',-1.55,47.22],['Bordeaux',-0.58,44.84],['Toulouse',1.44,43.6],['Marseille',5.37,43.3],['Nice',7.26,43.7],['Lyon',4.84,45.76,1]];
+  const LAB={Paris:[-24,-20,'end'],Strasbourg:[0,66,'middle'],Lille:[26,14,'start'],Nantes:[-26,14,'end'],Bordeaux:[-26,14,'end'],Toulouse:[0,66,'middle'],Marseille:[0,66,'middle'],Nice:[26,14,'start'],Lyon:[26,14,'start']};
   const k=Math.cos(46.5*Math.PI/180),P=(lo,la)=>[((lo+5.2)*k*100).toFixed(1),((51.4-la)*100).toFixed(1)];
   const W=(15*k*100).toFixed(0),H=(51.4-41.2)*100;
   const path=a=>'M'+a.map(p=>P(...p).join(',')).join('L')+'Z';
   let svg=`<path class="land" d="${path(OUT)}"/><path class="land" d="${path(CORSE)}"/>`;
-  for(const c of CITIES){const [x,y]=P(c[1],c[2]);const lx=c[0]==='Marseille'||c[0]==='Strasbourg'?-26:26,anc=lx<0?'end':'start';
-    svg+=`<g class="city" data-ok="${c[3]?1:''}" data-n="${c[0]}"><circle class="ping" cx="${x}" cy="${y}" r="10"/><circle cx="${x}" cy="${y}" r="55" fill="transparent"/><circle class="dot" cx="${x}" cy="${y}" r="17"/><text x="${+x+lx}" y="${+y+11}" text-anchor="${anc}" style="font-size:44px">${c[0]}</text></g>`;}
-  const s=$('map');s.setAttribute('viewBox',`-40 -20 ${+W+80} ${H+40}`);s.innerHTML=svg;
+  for(const c of CITIES){const [x,y]=P(c[1],c[2]);const L=LAB[c[0]]||[26,14,'start'];
+    svg+=`<g class="city" data-ok="${c[3]?1:''}" data-n="${c[0]}"><circle class="ping" cx="${x}" cy="${y}" r="10"/><circle cx="${x}" cy="${y}" r="55" fill="transparent"/><circle class="dot" cx="${x}" cy="${y}" r="17"/><text x="${+x+L[0]}" y="${+y+L[1]}" text-anchor="${L[2]}" style="font-size:42px">${c[0]}</text></g>`;}
+  const s=$('map');s.setAttribute('viewBox',`-260 -40 ${+W+380} ${H+120}`);s.innerHTML=svg;
   let clueN=1,done=false;
   s.querySelectorAll('.city').forEach(g=>g.onclick=()=>{if(done||g.classList.contains('no'))return;const b=g.querySelector('.dot').getBoundingClientRect();
     if(g.dataset.ok){done=true;g.classList.add('yes');$('omsg').textContent='Bien joué !! 🎉 C\'est Lyon !';burst(b.left+b.width/2,b.top+b.height/2,80);party();prog(3);store.set('cp','g4');setTimeout(()=>go('r3'),2400);return;}
@@ -583,7 +588,7 @@ function initScratch(){const cv=$('scratch'),box=$('dest'),r=devicePixelRatio||1
   const g=c.createLinearGradient(0,0,w,h);g.addColorStop(0,'#ff5fa2');g.addColorStop(.5,'#ffc2e2');g.addColorStop(1,'#b36bff');c.fillStyle=g;c.fillRect(0,0,w,h);
   c.fillStyle='rgba(255,255,255,.9)';for(let i=0;i<40;i++){c.beginPath();c.arc(rand(0,w),rand(0,h),rand(.6,1.8),0,6.28);c.fill();}
   c.fillStyle='#fff';c.font=`600 ${Math.round(Math.min(w/7,h/3.5))}px Poppins, sans-serif`;c.textAlign='center';c.textBaseline='middle';c.fillText('? ? ?',w/2,h/2);
-  c.globalCompositeOperation='destination-out';c.lineCap='round';c.lineJoin='round';c.lineWidth=Math.max(26,h/2.6);
+  c.globalCompositeOperation='destination-out';c.lineCap='round';c.lineJoin='round';c.lineWidth=Math.max(26,h/2.6);requestAnimationFrame(()=>box.classList.remove('cover'));
   let down=false,last=null,mv=0;const pos=e=>{const b=cv.getBoundingClientRect();return{x:e.clientX-b.left,y:e.clientY-b.top};};
   cv.onpointerdown=e=>{down=true;last=pos(e);try{cv.setPointerCapture(e.pointerId)}catch(_){}$('shint').style.opacity=.3;c.beginPath();c.arc(last.x,last.y,c.lineWidth/2,0,6.28);c.fill();};
   cv.onpointermove=e=>{if(!down||scratched)return;const p=pos(e);c.beginPath();c.moveTo(last.x,last.y);c.lineTo(p.x,p.y);c.stroke();last=p;if(++mv%10===0)chk();};

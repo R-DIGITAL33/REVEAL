@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pour toi">
+<meta name="theme-color" content="#0b1026">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<title>Une surprise pour toi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#0b1026; --night2:#151c3d; --gold:#d9b46a; --gold2:#f3dfa8; --ivory:#f7f1e3; --soft:#b9b3c9; --green:#2f6b4f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow:hidden;background:var(--night);color:var(--ivory);font-family:'Cormorant Garamond',serif;-webkit-user-select:none;user-select:none}
+  #sky{position:fixed;inset:0;z-index:0}
+  .pattern{position:fixed;inset:0;z-index:0;opacity:.07;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23d9b46a' stroke-width='1'%3E%3Cpath d='M60 10 L74 46 L110 60 L74 74 L60 110 L46 74 L10 60 L46 46 Z'/%3E%3Crect x='35' y='35' width='50' height='50' transform='rotate(45 60 60)'/%3E%3Ccircle cx='60' cy='60' r='12'/%3E%3C/g%3E%3C/svg%3E");}
+  .screen{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:calc(6vh + env(safe-area-inset-top)) calc(7vw + env(safe-area-inset-right)) calc(6vh + env(safe-area-inset-bottom)) calc(7vw + env(safe-area-inset-left));opacity:0;pointer-events:none;transition:opacity 1.2s ease}
+  .screen.active{opacity:1;pointer-events:auto}
+  h1{font-weight:400;font-size:clamp(2.4rem,6vw,4.4rem);line-height:1.1;color:var(--gold2);letter-spacing:.01em}
+  h2{font-weight:400;font-size:clamp(1.8rem,4.2vw,3rem);color:var(--gold2);line-height:1.15}
+  p.lead{font-size:clamp(1.3rem,2.8vw,1.9rem);color:var(--ivory);font-style:italic;max-width:30ch;line-height:1.4}
+  .small{font-family:'Jost',sans-serif;font-weight:300;letter-spacing:.25em;text-transform:uppercase;font-size:clamp(.75rem,1.4vw,.95rem);color:var(--gold)}
+  .arabic{font-family:'Amiri',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--gold);direction:rtl}
+  .btn{margin-top:5vh;font-family:'Jost',sans-serif;font-weight:400;letter-spacing:.2em;text-transform:uppercase;font-size:clamp(.85rem,1.6vw,1.05rem);
+    color:var(--night);background:linear-gradient(135deg,var(--gold2),var(--gold));border:none;border-radius:999px;padding:1.1em 2.4em;cursor:pointer;
+    box-shadow:0 0 0 0 rgba(217,180,106,.5);animation:pulse 2.4s infinite;transition:opacity .8s, transform .2s}
+  .btn:active{transform:scale(.96)}
+  .btn.hidden{opacity:0;pointer-events:none}
+  .btn.ghost{background:transparent;color:var(--gold);border:1px solid var(--gold);animation:none}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(217,180,106,.45)}70%{box-shadow:0 0 0 22px rgba(217,180,106,0)}100%{box-shadow:0 0 0 0 rgba(217,180,106,0)}}
+  .float{animation:float 5s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .divider{width:120px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:3vh auto}
+
+  /* messages */
+  .msg{position:absolute;max-width:80vw;opacity:0;transform:translateY(14px);transition:opacity 1.4s ease, transform 1.4s ease}
+  .msg.show{opacity:1;transform:none}
+
+  /* scratch */
+  .card{position:relative;width:min(78vw,560px);aspect-ratio:4/3.2;border-radius:22px;overflow:hidden;margin-top:3vh;
+    background:radial-gradient(circle at 50% 35%,#1f2a5c,#0e1430 75%);border:1px solid rgba(217,180,106,.5);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .card .under{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.6vh;padding:5%}
+  .card canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;transition:opacity 1.2s}
+  .hint{margin-top:3vh;font-family:'Jost',sans-serif;font-weight:300;color:var(--soft);font-size:clamp(.9rem,1.7vw,1.1rem);letter-spacing:.05em;transition:opacity .8s}
+
+  /* timeline */
+  .dates{font-size:clamp(1.4rem,3vw,2.1rem);color:var(--ivory);margin:1.5vh 0 3.5vh}
+  .dates b{color:var(--gold2);font-weight:600}
+  .stops{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2.2vh 2.2vw;width:min(90vw,820px)}
+  .stop{background:rgba(255,255,255,.04);border:1px solid rgba(217,180,106,.35);border-radius:18px;padding:2.4vh 1.6vw;display:flex;align-items:center;gap:1.4vw;text-align:left;
+    opacity:0;transform:translateY(20px) scale(.97);transition:opacity 1s ease, transform 1s ease}
+  .stop.show{opacity:1;transform:none}
+  .stop svg{flex:0 0 auto;width:clamp(48px,7vw,70px);height:clamp(48px,7vw,70px)}
+  .stop .n{font-family:'Jost',sans-serif;font-size:.8rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase}
+  .stop .t{font-size:clamp(1.4rem,2.8vw,2rem);color:var(--gold2);line-height:1.1}
+  .stop .d{font-size:clamp(1rem,1.8vw,1.25rem);font-style:italic;color:var(--soft);line-height:1.3;margin-top:.3em}
+  .stop.omra{border-color:var(--gold);background:rgba(217,180,106,.08)}
+  @media (max-width:600px){.stops{grid-template-columns:1fr}.stop{padding:1.6vh 4vw;gap:4vw}}
+
+  /* countdown */
+  .count{display:flex;gap:clamp(12px,3vw,34px);margin:3vh 0}
+  .count div{display:flex;flex-direction:column;align-items:center;min-width:clamp(64px,11vw,110px)}
+  .count span{font-size:clamp(2.6rem,7vw,5rem);color:var(--gold2);line-height:1}
+  .count small{font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(.65rem,1.2vw,.85rem);letter-spacing:.2em;text-transform:uppercase;color:var(--soft);margin-top:.6em}
+  .letter{font-size:clamp(1.2rem,2.4vw,1.6rem);line-height:1.5;max-width:34ch;font-style:italic}
+  .sign{margin-top:2vh;font-size:clamp(1.3rem,2.6vw,1.8rem);color:var(--gold2)}
+  #burst{position:fixed;inset:0;z-index:5;pointer-events:none}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="pattern"></div>
+<canvas id="burst"></canvas>
+
+<!-- 0 : accueil -->
+<section class="screen active" id="s0">
+  <svg class="float" width="110" height="150" viewBox="0 0 110 150" aria-hidden="true">
+    <defs><radialGradient id="glow" cx="50%" cy="60%" r="50%"><stop offset="0" stop-color="#ffe9b0"/><stop offset="1" stop-color="#d9b46a" stop-opacity="0"/></radialGradient></defs>
+    <line x1="55" y1="0" x2="55" y2="22" stroke="#d9b46a" stroke-width="2"/>
+    <path d="M40 22 h30 l6 14 h-42z" fill="#d9b46a"/>
+    <path d="M34 36 h42 l10 70 h-62z" fill="none" stroke="#d9b46a" stroke-width="2.5"/>
+    <ellipse cx="55" cy="74" rx="34" ry="40" fill="url(#glow)" opacity=".85"/>
+    <path d="M55 52 a14 14 0 1 0 10 24 a11 11 0 1 1 -10 -24z" fill="#f3dfa8"/>
+    <path d="M24 106 h62 l-8 14 h-46z" fill="#d9b46a"/>
+    <line x1="55" y1="120" x2="55" y2="140" stroke="#d9b46a" stroke-width="2"/>
+  </svg>
+  <p class="small" style="margin-top:4vh">Pour toi, mon amour</p>
+  <h1 style="margin-top:2vh">J'ai préparé<br>quelque chose…</h1>
+  <button class="btn" id="b0">Ouvrir ma surprise</button>
+</section>
+
+<!-- 1 : messages -->
+<section class="screen" id="s1">
+  <p class="lead msg" data-i="0">Depuis longtemps, je rêvais de t'offrir quelque chose de vraiment spécial…</p>
+  <p class="lead msg" data-i="1">Pas un simple cadeau.<br>Un moment rien qu'à nous deux.</p>
+  <p class="lead msg" data-i="2">Un voyage qui nous rapprocherait l'un de l'autre…<br>et d'Allah.</p>
+  <p class="lead msg" data-i="3">Es-tu prête ?</p>
+  <button class="btn hidden" id="b1" style="position:absolute;bottom:14vh">Oui, je suis prête</button>
+</section>
+
+<!-- 2 : grattage -->
+<section class="screen" id="s2">
+  <p class="small">Ton cadeau est caché ici</p>
+  <div class="card" id="card">
+    <div class="under">
+      <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
+        <path d="M20 42 L60 26 L100 42 L60 58 Z" fill="#2a2a2a"/>
+        <path d="M20 42 L60 58 L60 104 L20 88 Z" fill="#111"/>
+        <path d="M100 42 L60 58 L60 104 L100 88 Z" fill="#1c1c1c"/>
+        <path d="M20 52 L60 68 L100 52 L100 58 L60 74 L20 58 Z" fill="#d9b46a"/>
+        <path d="M70 70 L80 66 L80 92 L70 96 Z" fill="#c9a55a" opacity=".9"/>
+      </svg>
+      <div class="arabic">لَبَّيْكَ اللَّهُمَّ لَبَّيْكَ</div>
+      <h2>Nous partons faire<br>notre Omra ensemble</h2>
+    </div>
+    <canvas id="scratch"></canvas>
+  </div>
+  <p class="hint" id="hint">✨ Gratte la carte avec ton doigt ✨</p>
+  <button class="btn hidden" id="b2">Découvrir notre voyage</button>
+</section>
+
+<!-- 3 : itinéraire -->
+<section class="screen" id="s3">
+  <p class="small">Notre voyage à deux</p>
+  <p class="dates">Du <b>15 janvier</b> au <b>11 février 2027</b></p>
+  <div class="stops">
+    <div class="stop">
+      <svg viewBox="0 0 70 70"><path d="M15 58 h40 v-14 a20 20 0 0 0 -40 0z" fill="#2f6b4f"/><path d="M35 24 v-12 M31 14 a5 5 0 1 0 6 -3" stroke="#d9b46a" stroke-width="2.5" fill="none"/><rect x="10" y="58" width="50" height="4" fill="#d9b46a"/><rect x="4" y="20" width="4" height="38" fill="#d9b46a"/><rect x="62" y="20" width="4" height="38" fill="#d9b46a"/></svg>
+      <div><div class="n">Étape 1</div><div class="t">Médine</div><div class="d">La ville du Prophète ﷺ</div></div>
+    </div>
+    <div class="stop omra">
+      <svg viewBox="0 0 70 70"><path d="M12 24 L35 15 L58 24 L35 33 Z" fill="#2a2a2a"/><path d="M12 24 L35 33 L35 60 L12 51 Z" fill="#111"/><path d="M58 24 L35 33 L35 60 L58 51 Z" fill="#1c1c1c"/><path d="M12 30 L35 39 L58 30 L58 33 L35 42 L12 33 Z" fill="#d9b46a"/></svg>
+      <div><div class="n">Étape 2</div><div class="t">La Mecque</div><div class="d">Notre Omra, inch'Allah</div></div>
+    </div>
+    <div class="stop">
+      <svg viewBox="0 0 70 70"><circle cx="35" cy="35" r="24" fill="none" stroke="#d9b46a" stroke-width="2"/><path d="M42 20 a16 16 0 1 0 0 30 a13 13 0 1 1 0 -30z" fill="#f3dfa8"/></svg>
+      <div><div class="n">Étape 3</div><div class="t">Retour à Médine</div><div class="d">Pour savourer encore cette ville bénie</div></div>
+    </div>
+    <div class="stop">
+      <svg viewBox="0 0 70 70"><circle cx="35" cy="28" r="10" fill="#f3dfa8"/><path d="M6 46 q7 -6 14 0 t14 0 t14 0 t14 0" stroke="#d9b46a" stroke-width="2.5" fill="none"/><path d="M6 56 q7 -6 14 0 t14 0 t14 0 t14 0" stroke="#d9b46a" stroke-width="2.5" fill="none" opacity=".6"/></svg>
+      <div><div class="n">Étape 4</div><div class="t">Djeddah</div><div class="d">Les rives de la mer Rouge</div></div>
+    </div>
+  </div>
+  <button class="btn hidden" id="b3">Un dernier mot…</button>
+</section>
+
+<!-- 4 : final -->
+<section class="screen" id="s4">
+  <p class="small">Notre départ dans</p>
+  <div class="count">
+    <div><span id="cd-d">0</span><small>jours</small></div>
+    <div><span id="cd-h">0</span><small>heures</small></div>
+    <div><span id="cd-m">0</span><small>minutes</small></div>
+    <div><span id="cd-s">0</span><small>secondes</small></div>
+  </div>
+  <div class="divider"></div>
+  <p class="letter">Merci d'être à mes côtés, chaque jour.<br>Je n'imagine personne d'autre avec qui vivre ce voyage.<br>Qu'Allah accepte notre Omra et bénisse notre couple.</p>
+  <p class="sign">Je t'aime — ton mari ❤️</p>
+  <button class="btn ghost" id="b4" style="margin-top:4vh">Revoir depuis le début</button>
+</section>
+
+<script>
+/* ---------- ciel étoilé ---------- */
+const sky=document.getElementById('sky'),sc=sky.getContext('2d');let stars=[];
+function sizeSky(){const r=devicePixelRatio||1;sky.width=innerWidth*r;sky.height=innerHeight*r;sky.style.width=innerWidth+'px';sky.style.height=innerHeight+'px';sc.setTransform(r,0,0,r,0,0);
+  stars=Array.from({length:Math.round(innerWidth*innerHeight/5000)},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.3+.2,p:Math.random()*6.28,s:.5+Math.random()*1.5}));}
+function drawSky(t){const g=sc.createLinearGradient(0,0,0,innerHeight);g.addColorStop(0,'#070b1d');g.addColorStop(1,'#1a1f45');sc.fillStyle=g;sc.fillRect(0,0,innerWidth,innerHeight);
+  for(const s of stars){const a=.35+.65*Math.abs(Math.sin(s.p+t/1000*s.s));sc.globalAlpha=a;sc.fillStyle='#fff6dc';sc.beginPath();sc.arc(s.x,s.y,s.r,0,6.28);sc.fill();}
+  sc.globalAlpha=1;requestAnimationFrame(drawSky);}
+addEventListener('resize',sizeSky);sizeSky();requestAnimationFrame(drawSky);
+
+/* ---------- étincelles dorées ---------- */
+const bc=document.getElementById('burst'),bx=bc.getContext('2d');let parts=[],bursting=false;
+function sizeBurst(){const r=devicePixelRatio||1;bc.width=innerWidth*r;bc.height=innerHeight*r;bc.style.width=innerWidth+'px';bc.style.height=innerHeight+'px';bx.setTransform(r,0,0,r,0,0);}
+addEventListener('resize',sizeBurst);sizeBurst();
+function burst(n=140){const cx=innerWidth/2,cy=innerHeight/2;
+  for(let i=0;i<n;i++){const a=Math.random()*6.28,v=2+Math.random()*7;parts.push({x:cx,y:cy,vx:Math.cos(a)*v,vy:Math.sin(a)*v-2,l:1,r:1.5+Math.random()*3,c:Math.random()<.5?'#f3dfa8':'#d9b46a'});}
+  if(!bursting){bursting=true;requestAnimationFrame(stepBurst);}}
+function stepBurst(){bx.clearRect(0,0,innerWidth,innerHeight);
+  parts=parts.filter(p=>p.l>0);for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.vy+=.08;p.vx*=.99;p.l-=.009;bx.globalAlpha=Math.max(p.l,0);bx.fillStyle=p.c;bx.beginPath();bx.arc(p.x,p.y,p.r,0,6.28);bx.fill();}
+  bx.globalAlpha=1;if(parts.length)requestAnimationFrame(stepBurst);else bursting=false;}
+
+/* ---------- carillon doux ---------- */
+let ac;function chime(notes=[659,880,1319]){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+  notes.forEach((f,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.value=f;const t=ac.currentTime+i*.18;
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.12,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+1.8);o.connect(g).connect(ac.destination);o.start(t);o.stop(t+2);});}catch(e){}}
+
+/* ---------- navigation ---------- */
+const $=id=>document.getElementById(id);
+function go(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('s'+n).classList.add('active');}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+
+$('b0').onclick=async()=>{chime([523,659]);try{document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen().catch(()=>{});}catch(e){}
+  go(1);const msgs=[...document.querySelectorAll('#s1 .msg')];await wait(1300);
+  for(let i=0;i<msgs.length;i++){msgs[i].classList.add('show');await wait(i===msgs.length-1?1500:3600);if(i<msgs.length-1){msgs[i].classList.remove('show');await wait(1400);}}
+  $('b1').classList.remove('hidden');};
+
+$('b1').onclick=()=>{chime([587,740]);go(2);setTimeout(initScratch,300);};
+
+/* ---------- carte à gratter ---------- */
+let scratched=false;
+function initScratch(){const cv=$('scratch'),card=$('card'),r=devicePixelRatio||1,w=card.clientWidth,h=card.clientHeight;
+  cv.width=w*r;cv.height=h*r;const c=cv.getContext('2d');c.scale(r,r);
+  const g=c.createLinearGradient(0,0,w,h);g.addColorStop(0,'#b8924a');g.addColorStop(.45,'#f3dfa8');g.addColorStop(.55,'#e8cc88');g.addColorStop(1,'#a8823c');
+  c.fillStyle=g;c.fillRect(0,0,w,h);
+  c.globalAlpha=.18;c.strokeStyle='#5a4420';for(let x=-h;x<w;x+=14){c.beginPath();c.moveTo(x,0);c.lineTo(x+h,h);c.stroke();}c.globalAlpha=1;
+  c.fillStyle='#5a4420';c.font=`600 ${Math.round(w/14)}px "Cormorant Garamond", serif`;c.textAlign='center';c.textBaseline='middle';c.fillText('Gratte-moi ✦',w/2,h/2);
+  c.globalCompositeOperation='destination-out';c.lineCap='round';c.lineJoin='round';c.lineWidth=Math.max(36,w/11);
+  let down=false,last=null,moves=0;
+  const pos=e=>{const b=cv.getBoundingClientRect();return{x:e.clientX-b.left,y:e.clientY-b.top};};
+  cv.onpointerdown=e=>{down=true;last=pos(e);cv.setPointerCapture(e.pointerId);$('hint').style.opacity=0;c.beginPath();c.arc(last.x,last.y,c.lineWidth/2,0,6.28);c.fill();};
+  cv.onpointermove=e=>{if(!down||scratched)return;const p=pos(e);c.beginPath();c.moveTo(last.x,last.y);c.lineTo(p.x,p.y);c.stroke();last=p;if(++moves%12===0)check();};
+  cv.onpointerup=cv.onpointercancel=()=>{down=false;check();};
+  function check(){if(scratched)return;const d=c.getImageData(0,0,cv.width,cv.height).data;let clear=0,tot=0;
+    for(let i=3;i<d.length;i+=64){tot++;if(d[i]<40)clear++;}
+    if(clear/tot>.5){scratched=true;cv.style.opacity=0;cv.style.pointerEvents='none';burst(180);chime([523,659,784,1047]);setTimeout(()=>$('b2').classList.remove('hidden'),2200);}}
+}
+
+$('b2').onclick=async()=>{chime([659,880]);go(3);const st=[...document.querySelectorAll('.stop')];await wait(1200);
+  for(const s of st){s.classList.add('show');chime([880]);await wait(1500);}
+  await wait(600);$('b3').classList.remove('hidden');};
+
+$('b3').onclick=()=>{go(4);burst(220);chime([523,659,784,1047,1319]);startCount();};
+
+/* ---------- compte à rebours ---------- */
+let timer;function startCount(){const target=new Date(2027,0,15,0,0,0).getTime();
+  const tick=()=>{let d=Math.max(0,target-Date.now());const D=Math.floor(d/864e5);d-=D*864e5;const H=Math.floor(d/36e5);d-=H*36e5;const M=Math.floor(d/6e4);d-=M*6e4;const S=Math.floor(d/1e3);
+    $('cd-d').textContent=D;$('cd-h').textContent=String(H).padStart(2,'0');$('cd-m').textContent=String(M).padStart(2,'0');$('cd-s').textContent=String(S).padStart(2,'0');};
+  tick();clearInterval(timer);timer=setInterval(tick,1000);}
+
+$('b4').onclick=()=>{scratched=false;$('scratch').style.opacity=1;$('scratch').style.pointerEvents='auto';$('hint').style.opacity=1;
+  document.querySelectorAll('.msg,.stop').forEach(e=>e.classList.remove('show'));['b1','b2','b3'].forEach(b=>$(b).classList.add('hidden'));go(0);};
+</script>
+</body>
+</html>

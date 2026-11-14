@@ -96,7 +96,9 @@ h2{font-family:'Playfair Display',serif;font-weight:500;font-size:clamp(1.7rem,4
 .mcard .gf{background:linear-gradient(135deg,rgba(255,255,255,.35),rgba(255,255,255,.12));border:1px solid rgba(255,255,255,.55);font-family:'Great Vibes',cursive;font-size:clamp(2rem,5vw,3.2rem)}
 .mcard .gb{font-size:clamp(2rem,5.5vw,3.4rem);padding:0}
 .mcard.flip .gin{transform:rotateY(180deg)}
-.mcard.ok .gb{background:linear-gradient(135deg,#fff,#ffe29a);animation:pop .5s both}
+.mcard.ok .gb{background:linear-gradient(135deg,#fff,#ffe29a)}
+.mcard.ok{animation:okp .6s}
+@keyframes okp{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
 
 /* calendrier */
 .cals{display:flex;gap:clamp(14px,4vw,50px);align-items:center;margin:3.5vh 0 1vh}
@@ -160,6 +162,39 @@ h2{font-family:'Playfair Display',serif;font-weight:500;font-size:clamp(1.7rem,4
 .letterbox{max-width:min(88vw,600px);padding:3vh 4vw;font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.1rem,2.3vw,1.5rem);line-height:1.55}
 .sign{font-family:'Great Vibes',cursive;font-size:clamp(2rem,5vw,3.2rem);margin-top:2vh}
 
+/* ---- améliorations des jeux ---- */
+.row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.row .btn{margin-top:2.5vh;padding:.8em 1.6em}
+.letters{max-width:min(92vw,720px)}
+.letter.gone{opacity:0;transform:scale(0) rotate(180deg);pointer-events:none;transition:all .6s}
+.slots.win .slot:nth-child(2){animation-delay:.08s}.slots.win .slot:nth-child(3){animation-delay:.16s}.slots.win .slot:nth-child(4){animation-delay:.24s}.slots.win .slot:nth-child(5){animation-delay:.32s}.slots.win .slot:nth-child(6){animation-delay:.4s}
+.stats{display:flex;gap:12px;margin-top:2vh}
+.stats span{padding:.4em 1.1em;border-radius:99px;font-size:clamp(.9rem,1.8vw,1.1rem)}
+.mem{width:min(84vw,56vh,560px);margin-top:2.2vh}
+.mcard .gf{background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.55),rgba(255,255,255,.14));border-radius:18px}
+.mcard .gb{border-radius:18px}
+.mcard.ok .gb{box-shadow:0 0 0 3px #ffe29a,0 0 24px rgba(255,226,154,.9)}
+.toast{position:fixed;z-index:9;pointer-events:none;font-family:'Great Vibes',cursive;font-size:clamp(2rem,5vw,3rem);text-shadow:0 2px 14px rgba(120,0,90,.5);animation:toast 1.2s ease-out forwards}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,0) scale(.6)}25%{opacity:1;transform:translate(-50%,-20px) scale(1.1)}100%{opacity:0;transform:translate(-50%,-80px) scale(1)}}
+.g3wrap{display:flex;gap:3vw;align-items:center;justify-content:center;width:min(94vw,1000px);margin-top:2vh}
+.g3wrap .clues{width:auto;flex:1;max-width:420px;margin:0}
+.map{width:min(52vw,64vh);height:min(52vw,64vh);flex:0 0 auto;overflow:visible}
+.map .land{fill:rgba(255,255,255,.22);stroke:#fff;stroke-width:5;stroke-linejoin:round}
+.map .city{cursor:pointer}
+.map .city circle.dot{fill:#fff;stroke:var(--fuchsia);stroke-width:6;transition:all .3s}
+.map .city text{fill:#fff;font-family:'Poppins',sans-serif;font-weight:600;font-size:13px;paint-order:stroke;stroke:rgba(120,0,90,.45);stroke-width:9px}
+.map .city.no circle.dot{fill:#5a1846;stroke:#ff4d6d;opacity:.5}.map .city.no text{opacity:.4;text-decoration:line-through}
+.map .city.yes circle.dot{fill:#ffe29a;stroke:#fff;r:24}
+.map .ping{fill:none;stroke:#fff;stroke-width:6;opacity:0}
+.map .city.yes .ping{animation:ping 1.2s ease-out infinite}
+@keyframes ping{0%{r:18;opacity:1}100%{r:80;opacity:0}}
+@media (max-width:760px),(orientation:portrait){.g3wrap{flex-direction:column}.map{width:min(80vw,40vh);height:min(80vw,40vh)}}
+.shell{position:relative;width:min(84vw,600px);height:clamp(150px,24vw,210px);margin-top:4vh}
+.cup{position:absolute;top:0;width:28%;height:100%;border-radius:24px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 16px 40px rgba(90,0,80,.3);transition:left .42s cubic-bezier(.5,0,.5,1),transform .3s;font-size:clamp(3rem,8vw,5rem)}
+.cup.lift{transform:translateY(-18px) scale(1.05)}
+.cup.win{box-shadow:0 0 0 4px #ffe29a,0 0 40px rgba(255,226,154,.9)}
+.shell.busy .cup{pointer-events:none}
 /* virus */
 #sv{background:#7a0010;z-index:20;overflow:hidden;font-family:'Courier New',monospace;color:#ffd6db}
 #sv.active{animation:redpulse 1.2s infinite}
@@ -225,8 +260,8 @@ h2{font-family:'Playfair Display',serif;font-weight:500;font-size:clamp(1.7rem,4
   <h2>Remets les lettres dans l'ordre<br>pour découvrir ton cadeau</h2>
   <div class="slots" id="slots"></div>
   <div class="letters" id="letters"></div>
-  <p class="msg" id="wmsg"></p>
-  <button class="btn soft hidden" id="bhint">💡 Un indice ?</button>
+  <p class="msg" id="wmsg">Attention, des lettres pièges se sont glissées 😈</p>
+  <div class="row"><button class="btn soft" id="bclear">↺ Effacer</button><button class="btn soft hidden" id="bhint">💡 Un indice ?</button></div>
 </section>
 
 <section class="screen" id="r1">
@@ -241,6 +276,7 @@ h2{font-family:'Playfair Display',serif;font-weight:500;font-size:clamp(1.7rem,4
 <section class="screen" id="g2">
   <span class="tag">Jeu n°2 · Memory</span>
   <h2>Trouve toutes les paires<br>pour découvrir les dates</h2>
+  <div class="stats"><span class="glass">Coups : <b id="mmoves">0</b></span><span class="glass">Paires : <b id="mfound">0</b>/8</span></div>
   <div class="mem" id="mem"></div>
   <p class="msg" id="mmsg"></p>
 </section>
@@ -259,14 +295,15 @@ h2{font-family:'Playfair Display',serif;font-weight:500;font-size:clamp(1.7rem,4
 <!-- ============ JEU 3 : ÉNIGME ============ -->
 <section class="screen" id="g3">
   <span class="tag">Jeu n°3 · L'énigme</span>
-  <h2>De quelle ville partons-nous&nbsp;?</h2>
-  <div class="clues">
-    <div class="clue glass show">🌊 Je suis traversée par un fleuve <b>et</b> une rivière.</div>
-    <div class="clue glass">🍽️ On m'appelle la capitale de la gastronomie… et de ses bouchons.</div>
-    <div class="clue glass">✨ Chaque 8 décembre, je m'illumine de mille lumières.</div>
-  </div>
-  <div class="opts" id="opts">
-    <button class="opt">Paris</button><button class="opt">Marseille</button><button class="opt" data-ok="1">Lyon</button><button class="opt">Bordeaux</button>
+  <h2>D'où partons-nous&nbsp;? Touche la bonne ville 📍</h2>
+  <div class="g3wrap">
+    <div class="clues">
+      <div class="clue glass show">🌊 Je suis traversée par un fleuve <b>et</b> une rivière.</div>
+      <div class="clue glass">🍽️ On m'appelle la capitale de la gastronomie… et de ses bouchons.</div>
+      <div class="clue glass">✨ Chaque 8 décembre, je m'illumine de mille lumières.</div>
+      <div class="clue glass">🧭 Je suis entre Paris et Marseille… 😏</div>
+    </div>
+    <svg id="map" class="map"></svg>
   </div>
   <p class="msg" id="omsg"></p>
 </section>
@@ -282,7 +319,13 @@ h2{font-family:'Playfair Display',serif;font-weight:500;font-size:clamp(1.7rem,4
 <!-- ============ JEU 4 : CARTE D'EMBARQUEMENT ============ -->
 <section class="screen" id="g4">
   <span class="tag">Jeu n°4 · Destination</span>
-  <h2>Gratte la destination&nbsp;✨</h2>
+  <h2 id="g4title">Ton billet est caché dans une enveloppe…<br>Suis-la bien des yeux 👀</h2>
+  <div id="shellwrap">
+    <div class="shell" id="shell"><div class="cup"><span>💌</span></div><div class="cup"><span>💌</span></div><div class="cup"><span>💌</span></div></div>
+    <p class="msg" id="shmsg"></p>
+    <button class="btn" id="bshuffle">Mélanger 🔀</button>
+  </div>
+  <div id="passwrap" style="display:none;flex-direction:column;align-items:center">
   <div class="pass">
     <div class="main">
       <div class="hd"><span>CARTE D'EMBARQUEMENT</span><span>✈️ VOL D'AMOUR</span></div>
@@ -301,6 +344,7 @@ h2{font-family:'Playfair Display',serif;font-weight:500;font-size:clamp(1.7rem,4
   </div>
   <p class="sub" id="shint">Frotte avec ton doigt sur la case « Arrivée » 👆</p>
   <button class="btn hidden" id="b4">Et ensuite&nbsp;? →</button>
+  </div>
 </section>
 
 <section class="screen" id="r4">
@@ -326,7 +370,7 @@ h2{font-family:'Playfair Display',serif;font-weight:500;font-size:clamp(1.7rem,4
 
 <!-- ============ FINAL ============ -->
 <section class="screen" id="s6">
-  <span class="tag">Notre départ dans</span>
+  <span class="tag" id="cdtag">Notre départ dans</span>
   <div class="count">
     <div class="glass"><span id="cd-d">0</span><small>jours</small></div>
     <div class="glass"><span id="cd-h">0</span><small>heures</small></div>
@@ -429,25 +473,34 @@ function heartShow(){$('err').textContent='';go('sh');chime([523,659,784]);
   custom=()=>{const e=(performance.now()-t0)/1000;
     if(e>3.9&&!exploded){exploded=true;custom=null;
       for(const p of pts){const a=Math.atan2(p.ty-cy,p.tx-cx),v=rand(3,11);P.push({x:p.tx,y:p.ty,vx:Math.cos(a)*v,vy:Math.sin(a)*v-1,g:.1,f:.98,l:1.4,d:rand(.008,.015),s:p.sz,k:Math.random()<.2?'h':'c',c:p.c,r:0,vr:0});}
-      confetti(120);chime([523,659,784,1047,1319]);$('hearttxt').style.opacity=1;setTimeout(()=>{go('s0');},3200);return;}
+      confetti(120);chime([523,659,784,1047,1319]);$('hearttxt').style.opacity=1;setTimeout(()=>{enter('s0');},3200);return;}
     const pulse=e>2.3?1+.07*Math.sin((e-2.3)*9):1;
     for(const p of pts){const q=Math.min(1,Math.max(0,(e-p.dl)/1.6)),ez=1-Math.pow(1-q,3);
       const X=p.x+(cx+(p.tx-cx)*pulse-p.x)*ez,Y=p.y+(cy+(p.ty-cy)*pulse-p.y)*ez;fx.fillStyle=p.c;fx.globalAlpha=.9;fx.beginPath();fx.arc(X,Y,p.sz,0,6.28);fx.fill();}
     fx.globalAlpha=1;};
   kick();}
 
+/* ================= NAVIGATION + SAUVEGARDE ================= */
+const GAMES=['g1','g2','g3','g4'];
+const hooks={};
+function enter(id){go(id);
+  if(GAMES.includes(id)||id==='s5'){store.set('cp',id);}
+  if(GAMES.includes(id))prog(GAMES.indexOf(id));
+  if(hooks[id])hooks[id]();}
+function toast(txt,x,y){const t=document.createElement('div');t.className='toast';t.textContent=txt;t.style.left=x+'px';t.style.top=y+'px';document.body.appendChild(t);setTimeout(()=>t.remove(),1300);}
+
 /* ================= INTRO & FAUSSES PISTES ================= */
-$('b0').onclick=()=>{chime([587,740]);go('s1');};
+$('b0').onclick=()=>{chime([587,740]);enter('s1');};
 const GUESS=[['💍','Un bijou ?','Raté 😜'],['👜','Un sac ?','Non plus 🙈'],['🌸','Un parfum ?','Toujours pas 😂'],['💐','Des fleurs ?','Perdu 😏']];
 let flipped=0;
 $('guess').innerHTML=GUESS.map(g=>`<div class="gcard"><div class="gin"><div class="gf glass"><div class="emoji">${g[0]}</div><b>${g[1]}</b></div><div class="gb">${g[2]}</div></div></div>`).join('');
 document.querySelectorAll('.gcard').forEach(c=>c.onclick=()=>{if(c.classList.contains('flip'))return;c.classList.add('flip');buzz();flipped++;
   if(flipped===GUESS.length)setTimeout(()=>{$('guessend').style.opacity=1;$('b1').classList.remove('hidden');},900);});
-$('b1').onclick=()=>{chime([659,880]);prog(0);go('g1');};
+$('b1').onclick=()=>{chime([659,880]);enter('g1');};
 
-/* ================= JEU 1 : MOT MYSTÈRE ================= */
-const WORD='VOYAGE';let wslots=[],wtries=0,hints=0,wdone=false;
-(function setupWord(){let L;do{L=[...WORD].sort(()=>Math.random()-.5)}while(L.join('')===WORD);
+/* ================= JEU 1 : MOT MYSTÈRE (avec lettres pièges) ================= */
+const WORD='VOYAGE',DECOYS=['B','I','J','U','S'];let wslots=[],wtries=0,hints=0,wdone=false;
+(function setupWord(){const L=[...WORD,...DECOYS].sort(()=>Math.random()-.5);
   $('slots').innerHTML=[...WORD].map((_,i)=>`<div class="slot" data-i="${i}"></div>`).join('');
   $('letters').innerHTML=L.map((l,i)=>`<div class="letter" data-i="${i}">${l}</div>`).join('');
   wslots=Array(WORD.length).fill(null);
@@ -455,41 +508,76 @@ const WORD='VOYAGE';let wslots=[],wtries=0,hints=0,wdone=false;
     if(!wslots.includes(null))setTimeout(checkW,250);});
   document.querySelectorAll('.slot').forEach(s=>s.onclick=()=>{if(wdone)return;const i=+s.dataset.i;if(!wslots[i]||wslots[i].fixed)return;wslots[i].el.classList.remove('used');wslots[i]=null;renderW();});})();
 function renderW(){document.querySelectorAll('.slot').forEach((s,i)=>{s.textContent=wslots[i]?wslots[i].l:'';s.classList.toggle('full',!!wslots[i]);});}
+function clearW(){wslots=wslots.map(x=>{if(x&&x.fixed)return x;if(x)x.el.classList.remove('used');return null;});renderW();}
 function checkW(){const w=wslots.map(x=>x.l).join('');
-  if(w===WORD){wdone=true;$('slots').classList.add('win');$('wmsg').textContent='Bravo !! 🎉';party();prog(1);setTimeout(()=>go('r1'),2000);return;}
-  wtries++;buzz();shakeEl($('slots'));$('wmsg').textContent=['Ce n\'est pas ça… réessaie 😘','Toujours pas… courage ! 💪','Presque ? 🙈 Essaie encore'][Math.min(wtries-1,2)];
-  setTimeout(()=>{wslots=wslots.map(x=>{if(x&&x.fixed)return x;if(x)x.el.classList.remove('used');return null;});renderW();},650);
-  if(wtries>=2)$('bhint').classList.remove('hidden');}
+  if(w===WORD){wdone=true;$('slots').classList.add('win');$('wmsg').textContent='Bravo !! 🎉';party();prog(1);store.set('cp','g2');setTimeout(()=>go('r1'),2200);return;}
+  wtries++;buzz();shakeEl($('slots'));
+  const funny={BIJOUS:'Bien tenté… mais non 😂',BIJOU:'Bien tenté… mais non 😂'};
+  $('wmsg').textContent=funny[w]||['Ce n\'est pas ça… réessaie 😘','Toujours pas… courage ! 💪','Presque ? 🙈 Essaie encore','Allez, tu vas trouver ! 🥰'][Math.min(wtries-1,3)];
+  setTimeout(clearW,650);if(wtries>=2)$('bhint').classList.remove('hidden');}
+$('bclear').onclick=()=>{if(!wdone){clearW();pop();}};
 $('bhint').onclick=()=>{hints++;
-  if(hints===1){$('wmsg').textContent='💡 Il te faudra une valise… 🧳';}
-  else{$('wmsg').textContent='💡 Ça commence par un V… et il te faudra un passeport 🛂';$('bhint').classList.add('hidden');
+  if(hints===1){$('wmsg').textContent='💡 Les lettres B, I, J, U, S sont des pièges… je les enlève 🪄';
+    document.querySelectorAll('.letter').forEach(b=>{if(DECOYS.includes(b.textContent)){b.classList.add('gone');setTimeout(()=>b.style.display='none',600);}});
+    clearW();}
+  else{$('wmsg').textContent='💡 Ça commence par un V… et il te faudra une valise 🧳';$('bhint').classList.add('hidden');
     wslots.forEach(x=>{if(x)x.el.classList.remove('used');});wslots=Array(WORD.length).fill(null);
     const vb=[...document.querySelectorAll('.letter')].find(b=>b.textContent==='V');vb.classList.add('used');wslots[0]={l:'V',el:vb,fixed:true};renderW();}};
-$('br1').onclick=()=>{chime([659,880]);go('g2');};
+$('br1').onclick=()=>{chime([659,880]);enter('g2');};
 
-/* ================= JEU 2 : MEMORY ================= */
-(function setupMem(){const E=['💖','🌸','🦋','💎','🍓','🌷'];const deck=[...E,...E].sort(()=>Math.random()-.5);
-  $('mem').innerHTML=deck.map(e=>`<div class="mcard" data-e="${e}"><div class="gin"><div class="gf">?</div><div class="gb">${e}</div></div></div>`).join('');
-  let first=null,lock=false,found=0,moves=0;
+/* ================= JEU 2 : MEMORY 8 PAIRES ================= */
+(function setupMem(){const E=['💖','🌸','🦋','💎','🍓','🌷','🧁','👑'];const deck=[...E,...E].sort(()=>Math.random()-.5);
+  $('mem').innerHTML=deck.map(e=>`<div class="mcard" data-e="${e}"><div class="gin"><div class="gf">♡</div><div class="gb">${e}</div></div></div>`).join('');
+  let first=null,lock=false,found=0,moves=0,streak=0;
   document.querySelectorAll('.mcard').forEach(c=>c.onclick=()=>{if(lock||c.classList.contains('flip'))return;c.classList.add('flip');pop();
-    if(!first){first=c;return;}moves++;
-    if(first.dataset.e===c.dataset.e){first.classList.add('ok');c.classList.add('ok');first=null;found++;
-      const b=c.getBoundingClientRect();burst(b.left+b.width/2,b.top+b.height/2,30);
-      if(found===E.length){$('mmsg').textContent=`Bravo !! Toutes les paires en ${moves} coups 🎉`;party();prog(2);setTimeout(()=>go('r2'),2200);}}
-    else{lock=true;const a=first;first=null;setTimeout(()=>{a.classList.remove('flip');c.classList.remove('flip');lock=false;},900);}});})();
-$('br2').onclick=()=>{chime([659,880]);go('g3');};
+    if(!first){first=c;return;}moves++;$('mmoves').textContent=moves;
+    if(first.dataset.e===c.dataset.e){first.classList.add('ok');c.classList.add('ok');first=null;found++;streak++;$('mfound').textContent=found;
+      const b=c.getBoundingClientRect();burst(b.left+b.width/2,b.top+b.height/2,30);chime([784,1047]);
+      toast(streak>=2?`Combo x${streak} 🔥`:['Bravo !','Trop forte !','Yes !','Magnifique !'][found%4],b.left+b.width/2,b.top);
+      if(found===E.length){$('mmsg').textContent=`Toutes les paires en ${moves} coups 🎉`;party();prog(2);store.set('cp','g3');setTimeout(()=>go('r2'),2300);}}
+    else{streak=0;lock=true;const a=first;first=null;setTimeout(()=>{a.classList.remove('flip');c.classList.remove('flip');lock=false;},850);}});})();
+$('br2').onclick=()=>{chime([659,880]);enter('g3');};
 
-/* ================= JEU 3 : ÉNIGME ================= */
-let clueN=1;
-document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
-  if(b.dataset.ok){b.classList.add('yes');$('omsg').textContent='Bien joué !! 🎉';party();prog(3);setTimeout(()=>go('r3'),2000);
-    document.querySelectorAll('.opt').forEach(o=>o.style.pointerEvents='none');return;}
-  b.classList.add('no');buzz();shakeEl($('opts'));
-  const cl=document.querySelectorAll('.clue');if(clueN<cl.length){cl[clueN].classList.add('show');clueN++;$('omsg').textContent='Raté ! Voilà un autre indice 👆';}
-  else $('omsg').textContent='Allez, il n\'en reste plus beaucoup… 😏';});
-$('br3').onclick=()=>{chime([659,880]);go('g4');setTimeout(initScratch,400);};
+/* ================= JEU 3 : CARTE DE FRANCE ================= */
+(function setupMap(){
+  const OUT=[[2.5,51.1],[4.2,49.95],[5.9,49.5],[8.2,49.0],[7.6,47.6],[6.9,47.4],[6.0,46.4],[7.0,45.9],[6.6,45.1],[7.0,44.2],[7.5,43.8],[6.2,43.1],[5.0,43.35],[4.2,43.5],[3.1,43.1],[3.2,42.45],[1.7,42.5],[-0.5,42.8],[-1.8,43.4],[-1.25,44.6],[-1.2,46.2],[-2.2,47.1],[-4.5,47.9],[-4.75,48.4],[-3.0,48.85],[-1.6,48.65],[-1.9,49.7],[-1.25,49.35],[0.2,49.5],[1.4,50.1],[1.6,50.9]];
+  const CORSE=[[9.4,43.0],[9.55,42.3],[9.2,41.4],[8.6,41.9],[8.7,42.6]];
+  const CITIES=[['Paris',2.35,48.86],['Lille',3.06,50.63],['Strasbourg',7.75,48.57],['Nantes',-1.55,47.22],['Bordeaux',-0.58,44.84],['Toulouse',1.44,43.6],['Marseille',5.37,43.3],['Nice',7.26,43.7],['Lyon',4.84,45.76,1]];
+  const k=Math.cos(46.5*Math.PI/180),P=(lo,la)=>[((lo+5.2)*k*100).toFixed(1),((51.4-la)*100).toFixed(1)];
+  const W=(15*k*100).toFixed(0),H=(51.4-41.2)*100;
+  const path=a=>'M'+a.map(p=>P(...p).join(',')).join('L')+'Z';
+  let svg=`<path class="land" d="${path(OUT)}"/><path class="land" d="${path(CORSE)}"/>`;
+  for(const c of CITIES){const [x,y]=P(c[1],c[2]);const lx=c[0]==='Marseille'||c[0]==='Strasbourg'?-26:26,anc=lx<0?'end':'start';
+    svg+=`<g class="city" data-ok="${c[3]?1:''}" data-n="${c[0]}"><circle class="ping" cx="${x}" cy="${y}" r="10"/><circle cx="${x}" cy="${y}" r="55" fill="transparent"/><circle class="dot" cx="${x}" cy="${y}" r="17"/><text x="${+x+lx}" y="${+y+11}" text-anchor="${anc}" style="font-size:44px">${c[0]}</text></g>`;}
+  const s=$('map');s.setAttribute('viewBox',`-40 -20 ${+W+80} ${H+40}`);s.innerHTML=svg;
+  let clueN=1,done=false;
+  s.querySelectorAll('.city').forEach(g=>g.onclick=()=>{if(done||g.classList.contains('no'))return;const b=g.querySelector('.dot').getBoundingClientRect();
+    if(g.dataset.ok){done=true;g.classList.add('yes');$('omsg').textContent='Bien joué !! 🎉 C\'est Lyon !';burst(b.left+b.width/2,b.top+b.height/2,80);party();prog(3);store.set('cp','g4');setTimeout(()=>go('r3'),2400);return;}
+    g.classList.add('no');buzz();toast('Raté 🙈',b.left+b.width/2,b.top);
+    const cl=document.querySelectorAll('.clue');if(clueN<cl.length){cl[clueN].classList.add('show');clueN++;$('omsg').textContent='Non ! Voilà un autre indice 👆';}
+    else $('omsg').textContent='Tu chauffes… 🔥';});})();
+$('br3').onclick=()=>{chime([659,880]);enter('g4');};
 
-/* ================= JEU 4 : GRATTAGE ================= */
+/* ================= JEU 4 : BONNETEAU + GRATTAGE ================= */
+const cups=[...document.querySelectorAll('.cup')];let order=[0,1,2],winCup=0,shellRound=0;
+function placeCups(){order.forEach((c,pos)=>cups[c].style.left=(pos*36)+'%');}
+placeCups();
+async function shellPlay(){const sh=$('shell');sh.classList.add('busy');$('bshuffle').classList.add('hidden');$('shmsg').textContent='';
+  cups.forEach(c=>{c.classList.remove('win');c.firstChild.textContent='💌';});
+  winCup=Math.floor(Math.random()*3);cups[winCup].firstChild.textContent='🎫';cups[winCup].classList.add('lift');$('shmsg').textContent='Le billet est ici 👀';chime([880]);
+  await wait(1600);cups[winCup].firstChild.textContent='💌';cups[winCup].classList.remove('lift');$('shmsg').textContent='';await wait(500);
+  const n=8+shellRound*2,sp=Math.max(260,420-shellRound*40);cups.forEach(c=>c.style.transitionDuration=sp+'ms');
+  for(let i=0;i<n;i++){let a=Math.floor(Math.random()*3),b=(a+1+Math.floor(Math.random()*2))%3;[order[a],order[b]]=[order[b],order[a]];placeCups();await wait(sp+60);}
+  $('shmsg').textContent='Où est ton billet ? Touche une enveloppe 👇';sh.classList.remove('busy');}
+cups.forEach((c,i)=>c.onclick=async()=>{const sh=$('shell');if(sh.classList.contains('busy'))return;sh.classList.add('busy');
+  if(i===winCup){c.firstChild.textContent='🎫';c.classList.add('lift','win');$('shmsg').textContent='Trouvé !! 🎉';party();await wait(2000);
+    $('shellwrap').style.display='none';$('g4title').innerHTML='Gratte la destination&nbsp;✨';$('passwrap').style.display='flex';setTimeout(initScratch,300);}
+  else{c.firstChild.textContent='💨';c.classList.add('lift');buzz();$('shmsg').textContent='Vide ! 🙈 Le billet était là…';await wait(900);
+    cups[winCup].firstChild.textContent='🎫';cups[winCup].classList.add('lift');await wait(1400);
+    cups.forEach(x=>{x.classList.remove('lift');x.firstChild.textContent='💌';});shellRound=Math.max(0,shellRound-1);
+    $('shmsg').textContent='On recommence ? 😏';$('bshuffle').textContent='Re-mélanger 🔀';$('bshuffle').classList.remove('hidden');}});
+$('bshuffle').onclick=()=>{shellPlay();shellRound++;};
+
 let scratched=false;
 function initScratch(){const cv=$('scratch'),box=$('dest'),r=devicePixelRatio||1,w=box.clientWidth,h=box.clientHeight;cv.width=w*r;cv.height=h*r;const c=cv.getContext('2d');c.scale(r,r);
   const g=c.createLinearGradient(0,0,w,h);g.addColorStop(0,'#ff5fa2');g.addColorStop(.5,'#ffc2e2');g.addColorStop(1,'#b36bff');c.fillStyle=g;c.fillRect(0,0,w,h);
@@ -501,21 +589,25 @@ function initScratch(){const cv=$('scratch'),box=$('dest'),r=devicePixelRatio||1
   cv.onpointermove=e=>{if(!down||scratched)return;const p=pos(e);c.beginPath();c.moveTo(last.x,last.y);c.lineTo(p.x,p.y);c.stroke();last=p;if(++mv%10===0)chk();};
   cv.onpointerup=cv.onpointercancel=()=>{down=false;chk();};
   function chk(){if(scratched)return;const d=c.getImageData(0,0,cv.width,cv.height).data;let cl=0,t=0;for(let i=3;i<d.length;i+=32){t++;if(d[i]<40)cl++;}
-    if(cl/t>.55){scratched=true;cv.style.opacity=0;cv.style.pointerEvents='none';party();prog(4);$('shint').style.opacity=0;setTimeout(()=>$('b4').classList.remove('hidden'),1600);}}}
+    if(cl/t>.55){scratched=true;cv.style.opacity=0;cv.style.pointerEvents='none';party();prog(4);store.set('cp','s5');$('shint').style.opacity=0;setTimeout(()=>$('b4').classList.remove('hidden'),1600);}}}
 $('b4').onclick=()=>{chime([659,880]);go('r4');};
 
 /* ================= DÉROULÉ ================= */
-$('br4').onclick=async()=>{chime([523,659]);$('prog').classList.remove('on');go('s5');await wait(1000);
+hooks.s5=async()=>{$('prog').classList.remove('on');await wait(1000);
   for(const s of document.querySelectorAll('.stop')){s.classList.add('show');if(s.classList.contains('omra')){party();await wait(2600);}else{chime([880]);await wait(1500);}}
   $('talb').classList.add('show');await wait(1500);$('b5').classList.remove('hidden');};
-$('b5').onclick=()=>{go('s6');party();setTimeout(confetti,1500);startCount();};
+$('br4').onclick=()=>{chime([523,659]);enter('s5');};
+$('b5').onclick=()=>{enter('s6');party();setTimeout(confetti,1500);};
 
-/* ================= FINAL ================= */
+/* ================= FINAL (mémorisé) ================= */
 let timer;function startCount(){const T=new Date(2027,0,15,0,0,0).getTime();
   const tick=()=>{let d=Math.max(0,T-Date.now());const D=Math.floor(d/864e5);d-=D*864e5;const H=Math.floor(d/36e5);d-=H*36e5;const M=Math.floor(d/6e4);d-=M*6e4;const S=Math.floor(d/1e3);
     $('cd-d').textContent=D;$('cd-h').textContent=String(H).padStart(2,'0');$('cd-m').textContent=String(M).padStart(2,'0');$('cd-s').textContent=String(S).padStart(2,'0');};
   tick();clearInterval(timer);timer=setInterval(tick,1000);}
-$('b6').onclick=()=>location.reload();
+hooks.s6=()=>{store.set('done','1');$('prog').classList.remove('on');startCount();};
+$('b6').onclick=()=>{try{sessionStorage.setItem('replay','1')}catch(e){}location.reload();};
+// réinitialisation secrète (pour toi) : toucher 7 fois « Notre départ dans »
+let rtaps=0,rT;$('cdtag').onclick=()=>{rtaps++;clearTimeout(rT);rT=setTimeout(()=>rtaps=0,2500);if(rtaps>=7){['done','cp','fails','locked'].forEach(store.del);location.reload();}};
 
 /* ================= VIRUS ================= */
 function virus(){go('sv');$('danger').style.opacity=0;alarm();
@@ -523,7 +615,13 @@ function virus(){go('sv');$('danger').style.opacity=0;alarm();
   setInterval(()=>{let line='';for(let i=0;i<10;i++)line+=Math.random()<.15?words[Math.random()*words.length|0]+' ':hex[Math.random()*16|0]+hex[Math.random()*16|0]+' ';
     txt=(txt+line+'\n').slice(-6000);$('code').textContent=txt;},70);}
 let taps=0,tapT;$('vtitle').onclick=()=>{taps++;clearTimeout(tapT);tapT=setTimeout(()=>taps=0,2500);if(taps>=7){store.del('locked');store.del('fails');location.reload();}};
-if(store.get('locked')==='1')virus();
+
+/* ================= DÉMARRAGE ================= */
+(function boot(){let replay=false;try{replay=sessionStorage.getItem('replay')==='1';sessionStorage.removeItem('replay');}catch(e){}
+  if(replay){$('danger').style.opacity=0;enter('s0');return;}
+  if(store.get('done')==='1'){$('danger').style.opacity=0;enter('s6');return;}
+  if(store.get('locked')==='1'){virus();return;}
+  const cp=store.get('cp');if(cp){$('danger').style.opacity=0;if(cp==='s5')prog(4);enter(cp);}})();
 </script>
 </body>
 </html>
